@@ -8,11 +8,11 @@
 require 'spec_helper'
 
 describe 'smbios::default' do
-  context 'When all attributes are default, on centos 6.7' do
+  context 'When all attributes are default, on centos 6.9' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(
         platform: 'centos',
-        version:  '6.7',
+        version:  '6.9',
       )
       runner.converge(described_recipe)
     end
@@ -21,11 +21,11 @@ describe 'smbios::default' do
       expect { chef_run }.to_not raise_error
     end
   end
-  context 'When all attributes are default, on centos 7.2.1511' do
+  context 'When all attributes are default, on centos 7.4.1708' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(
         platform: 'centos',
-        version:  '7.2.1511',
+        version:  '7.4.1708',
       )
       runner.converge(described_recipe)
     end
