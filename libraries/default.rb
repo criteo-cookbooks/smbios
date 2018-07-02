@@ -7,6 +7,7 @@ module SMBIOS
     bios_info = wmi.first_of('WIN32_Bios')
     ::Mash.new(
       bios:    ::Mash.new(
+        date:    bios_info['ReleaseDate'].to_s.unpack('a4a2a2').join('-'),
         vendor:  bios_info['Manufacturer'].to_s.strip,
         version: bios_info['SMBIOSBIOSVersion'].to_s.strip,
       ),
@@ -19,13 +20,15 @@ module SMBIOS
 
   def self.linux_info
     info = ::Mash.new
-    { product: %w[serial name], bios: %w[vendor version] }.each do |type, keys|
+    { product: %w[serial name], bios: %w[date vendor version] }.each do |type, keys|
       info[type] ||= ::Mash.new
       keys.each do |key|
         path = ::File.join(SYSFS_DMI_ID, "#{type}_#{key}")
         info[type][key] = ::File.read(path).strip if ::File.exist?(path)
       end
     end
+    # Format bios date to ISO 8601
+    info['bios']['date'].gsub!(%r{(\d+)/(\d+)/(\d+).*}, '\3-\1-\2')
     info
   end
 
