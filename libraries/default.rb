@@ -10,6 +10,8 @@ module SMBIOS
         date:    bios_info['ReleaseDate'].to_s.unpack('a4a2a2').join('-'),
         vendor:  bios_info['Manufacturer'].to_s.strip,
         version: bios_info['SMBIOSBIOSVersion'].to_s.strip,
+        release: [bios_info['SystemBiosMajorVersion'].to_s.strip,
+                  bios_info['SystemBiosMinorVersion'].to_s.strip].join('.'),
       ),
       product: ::Mash.new(
         serial: bios_info['SerialNumber'].to_s.strip,
@@ -20,7 +22,7 @@ module SMBIOS
 
   def self.linux_info
     info = ::Mash.new
-    { product: %w[serial name], bios: %w[date vendor version] }.each do |type, keys|
+    { product: %w[serial name], bios: %w[date release vendor version] }.each do |type, keys|
       info[type] ||= ::Mash.new
       keys.each do |key|
         path = ::File.join(SYSFS_DMI_ID, "#{type}_#{key}")
