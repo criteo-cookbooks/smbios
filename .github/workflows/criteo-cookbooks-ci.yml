@@ -1,0 +1,62 @@
+# This is a basic workflow to help you get started with Actions
+name: Criteo Cookbooks CI
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.6
+          bundler-cache: true
+      - name: Run Rubocop
+        run: bundle exec rubocop
+  rspec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.6
+          bundler-cache: true
+      - name: Run RSpec
+        run: bundle exec rspec
+  kitchen:
+    needs: [rubocop, rspec]
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.6
+          bundler-cache: true
+      - env:
+          KITCHEN_YAML: kitchen.ci.yml
+        run: bundle exec kitchen test
+  supermarket:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [rubocop, rspec, kitchen]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Publish to supermarket
+      uses: afaundez/chef-supermarket-action@8cdbe1cccbe1ecd8685b2ea8f48780135bae7cee
+      with:
+        user: criteo
+        cookbook: smbios
+        category: Operating Systems & Virtualization
+      env:
+        SUPERMARKET_API_KEY: ${{ secrets.SUPERMARKET_API_KEY }}
