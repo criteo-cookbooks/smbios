@@ -1,0 +1,30 @@
+---
+
+provisioner:
+  name: chef_zero
+  install_strategy: always
+  chef_license: accept
+  product_name: chef
+
+driver:
+  name: exec
+
+platforms:
+<% if ::Gem.win_platform? %>
+ - name: windows
+   os_type: windows
+   shell_type: powershell
+   provisioner:
+     # Reset env inherited from kitchen when running Chef
+     command_prefix: $env:RUBYLIB=$env:RUBYOPT=$env:GEM_PATH=$env:GEM_HOME=$env:BUNDLE_GEMFILE=$env:BUNDLE_BIN_PATH="";
+<% else %>
+ - name: unix
+   os_type: unix
+   shell_type: bourne
+<% end %>
+
+verifier:
+  name: inspec
+
+suites:
+ - name: default

@@ -1,0 +1,13 @@
+---
+
+driver:
+  name: dokken
+
+provisioner:
+  name: dokken
+  install_strategy: always
+  chef_license: accept
+  product_name: chef
+
+platforms:
+ - name: centos-7

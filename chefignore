@@ -75,6 +75,12 @@ Rakefile
 */.hg/*
 */.svn/*
 
+# Bundler #
+Gemfile
+Gemfile.lock
+.bundle/*
+vendor/*
+
 # Berkshelf #
 #############
 Berksfile
