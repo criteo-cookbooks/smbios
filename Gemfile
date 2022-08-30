@@ -13,5 +13,5 @@ group :ec2 do
 end
 
 group :lint do
-  gem 'rubocop', '=0.56.0'
+  gem 'rubocop', '1.35.1'
 end
