@@ -30,7 +30,7 @@ module SMBIOS
       end
     end
     # Format bios date to ISO 8601
-    info['bios']['date'].gsub!(%r{(\d+)/(\d+)/(\d+).*}, '\3-\1-\2')
+    info.dig('bios', 'date')&.gsub!(%r{(\d+)/(\d+)/(\d+).*}, '\3-\1-\2')
     info
   end
 
